@@ -16,7 +16,7 @@ persistentVolumeClaim:
 kubeploy:
   image:
     repository: kubeploy
-    tag: main
+    tag: latest
     pullPolicy: Always
   replicas: 1
   env:
