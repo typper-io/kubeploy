@@ -1,0 +1,73 @@
+namespace: kubeploy
+
+serviceAccount:
+  name: kubeploy-sa
+
+clusterRole:
+  name: kubeploy-role
+
+clusterRoleBinding:
+  name: kubeploy-role-binding
+
+persistentVolumeClaim:
+  name: postgres-data
+  storage: 1Gi
+
+kubeploy:
+  image:
+    repository: kubeploy
+    tag: main
+    pullPolicy: Always
+  replicas: 1
+  env:
+    DATABASE_URL: 'postgresql://postgres:password@localhost:5432/kubeploy'
+
+    # Used for github oauth
+    GITHUB_SECRET: 'your-github-secret'
+    GITHUB_ID: 'your-github-id'
+
+    # Used for next-auth
+    NEXTAUTH_SECRET: 'your-next-auth-secret'
+    NEXTAUTH_URL: 'http://localhost:3000'
+
+    INSTANCE_ADMIN_EMAIL: 'your-email'
+    LETSENCRYPT_EMAIL: 'your-email'
+    DEFAULT_NAMESPACE: 'kubeploy'
+    NODE_ENV: 'development'
+
+    # Used for github webhook
+    APP_DOMAIN: 'localhost'
+
+postgres:
+  image:
+    repository: postgres
+    tag: '13'
+  env:
+    POSTGRES_DB: kubeploy
+    POSTGRES_USER: postgres # You should change this
+    POSTGRES_PASSWORD: password
+
+service:
+  name: kubeploy-service
+  port: 80
+  targetPort: 3000
+
+localRegistry:
+  image:
+    repository: registry
+    tag: '2'
+  replicas: 1
+  service:
+    port: 5000
+  tls:
+    enabled: true
+    secretName: registry-tls
+  auth:
+    htpasswd: '' # Base64 encoded htpasswd file content
+
+prismaDbPush:
+  image:
+    repository: node
+    tag: 14
+  env:
+    DATABASE_URL: 'postgresql://postgres:password@postgres:5432/kubeploy'

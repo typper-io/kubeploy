@@ -387,7 +387,7 @@ async function buildAndDeployToKubernetes({
               {
                 name: name,
                 image: localImageName,
-                imagePullPolicy: 'Never',
+                imagePullPolicy: 'Always',
                 envFrom: [
                   {
                     configMapRef: {
@@ -561,10 +561,6 @@ export async function createService(
       status: ServiceStatus.PENDING,
     },
   })
-
-  logger.info('Cloning repository')
-
-  logger.info('Determining package registry')
 
   logger.info('Starting build and deploy process')
 

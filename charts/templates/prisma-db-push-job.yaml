@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prisma-db-push
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: prisma-db-push
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: prisma-db-push
+          image: {{ .Values.prismaDbPush.image.repository }}:{{ .Values.prismaDbPush.image.tag }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              npm install -g prisma
+              prisma generate
+              prisma db push
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.prismaDbPush.env.DATABASE_URL | quote }}

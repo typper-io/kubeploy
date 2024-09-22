@@ -1,3 +1,13 @@
 {
-  "cSpell.words": ["kaniko", "kubeploy", "nextui", "tailwindcss"]
+  "cSpell.words": [
+    "GITHUB",
+    "kaniko",
+    "kubeploy",
+    "LETSENCRYPT",
+    "NEXTAUTH",
+    "nextui",
+    "postgres",
+    "postgresql",
+    "tailwindcss"
+  ]
 }

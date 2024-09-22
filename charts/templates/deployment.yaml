@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeploy
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.kubeploy.replicas }}
+  selector:
+    matchLabels:
+      app: kubeploy
+  template:
+    metadata:
+      labels:
+        app: kubeploy
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - name: kubeploy
+          image: {{ .Values.kubeploy.image.repository }}:{{ .Values.kubeploy.image.tag }}
+          imagePullPolicy: {{ .Values.kubeploy.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
+          env:
+            {{- range $key, $value := .Values.kubeploy.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+        - name: postgres
+          image: {{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}
+          ports:
+            - containerPort: 5432
+          env:
+            {{- range $key, $value := .Values.postgres.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistentVolumeClaim.name }}

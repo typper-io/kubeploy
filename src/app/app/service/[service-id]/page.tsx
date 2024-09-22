@@ -101,7 +101,7 @@ export default function ServiceView() {
           <TabsTrigger value="logs">Logs</TabsTrigger>
           <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
         </TabsList>
-        <TabsContent value="general" className="py-4">
+        <TabsContent value="general" className="py-4 space-y-5">
           <div className="border-destructive border rounded-md p-4 border-dashed relative flex gap-8 flex-col">
             <div className="absolute top-[-18px] bg-background p-1 text-destructive">
               Danger zone
