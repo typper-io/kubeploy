@@ -17,6 +17,7 @@ import { getPodMetrics } from '@/actions/get-pod-metrics'
 import { RefreshCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Switch } from '@/components/ui/switch'
+import { LogViewer } from '@/components/log-viewer'
 
 export default function ServiceView() {
   const { 'service-id': serviceId } = useParams()
@@ -133,12 +134,7 @@ export default function ServiceView() {
             </Button>
           </div>
 
-          <div
-            className="bg-accent rounded-md p-2 max-h-[800px] overflow-y-auto"
-            style={{ whiteSpace: 'pre-line' }}
-          >
-            {logs}
-          </div>
+          <LogViewer logs={logs} />
         </TabsContent>
         <TabsContent value="monitoring" className="flex flex-wrap gap-y-6 py-4">
           <div className="w-1/2 space-y-5">

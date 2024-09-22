@@ -52,7 +52,7 @@ export type CreateServiceData = z.infer<typeof formSchema>
 async function waitForJobCompletion({
   jobName,
   namespace,
-  interval = 5000,
+  interval = 10000,
   maxAttempts = 200,
   logger,
 }: {
@@ -69,12 +69,8 @@ async function waitForJobCompletion({
   const batchApi = kc.makeApiClient(k8s.BatchV1Api)
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    logger.info(`Checking job status (attempt ${attempt + 1}/${maxAttempts})`)
-
     const response = await batchApi.readNamespacedJobStatus(jobName, namespace)
     const job = response.body
-
-    logger.info('Job status:', { status: job.status })
 
     if (job.status?.succeeded === 1) {
       logger.info('Job completed successfully')
@@ -87,8 +83,6 @@ async function waitForJobCompletion({
 
       continue
     }
-
-    logger.info('Job not completed yet, waiting...')
 
     await new Promise((resolve) => setTimeout(resolve, interval))
   }
@@ -218,7 +212,7 @@ async function buildAndDeployToKubernetes({
     logger.info('Creating Kaniko build job')
 
     const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, '-')
-    const localRegistryName = 'local-registry.default.svc.cluster.local:5000'
+    const localRegistryName = `local-registry.${namespace}.svc.cluster.local:5000`
     const localImageName = `${localRegistryName}/${sanitizedName}:latest`
 
     const kanikoBuildJob = {

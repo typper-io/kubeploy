@@ -34,7 +34,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: kubeploy-sa
-    namespace: default
+    namespace: kubeploy
 roleRef:
   kind: ClusterRole
   name: kubeploy-role
