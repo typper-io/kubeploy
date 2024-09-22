@@ -81,7 +81,7 @@ async function waitForJobCompletion({
     if (job.status?.failed === 1) {
       logger.error('Build job failed')
 
-      continue
+      throw new Error('Build job failed')
     }
 
     await new Promise((resolve) => setTimeout(resolve, interval))
@@ -586,6 +586,12 @@ export async function createService(
         where: {
           id: createdService.id,
         },
+      })
+
+      fs.unlink(path.join(process.cwd(), 'logs', `${name}.log`), (err) => {
+        if (err) {
+          logger.error('Error deleting log file:', err)
+        }
       })
     })
     .then(async () => {

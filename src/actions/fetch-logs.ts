@@ -74,22 +74,45 @@ export async function getServiceLogs(serviceName: string): Promise<string> {
     }
 
     try {
-      const response = await coreV1Api.readNamespacedPodLog(
-        `${deploymentName}-build`,
+      const batchV1Api = kc.makeApiClient(k8s.BatchV1Api)
+      const jobName = `${deploymentName}-build`
+      const jobResponse = await batchV1Api.readNamespacedJob(jobName, namespace)
+
+      const labelSelector = Object.entries(
+        jobResponse.body.spec?.selector?.matchLabels || {}
+      )
+        .map(([key, value]) => `${key}=${value}`)
+        .join(',')
+
+      const podResponse = await coreV1Api.listNamespacedPod(
         namespace,
         undefined,
         undefined,
         undefined,
         undefined,
-        undefined,
-        undefined,
-        undefined,
-        1000
+        labelSelector
       )
 
-      k8sBuildLogs = response.body
+      if (podResponse.body.items.length) {
+        const podName = podResponse.body.items[0].metadata!.name!
+
+        const logsResponse = await coreV1Api.readNamespacedPodLog(
+          podName,
+          namespace,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          1000
+        )
+
+        k8sBuildLogs = logsResponse.body
+      }
     } catch {
-      k8sBuildLogs = ''
+      k8sBuildLogs = 'Error fetching build logs'
     }
 
     const sanitizedServiceName = serviceName.replace(/[^a-zA-Z0-9-_]/g, '')

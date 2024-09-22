@@ -2,13 +2,23 @@ import React from 'react'
 import { format } from 'date-fns'
 
 export function LogViewer({ logs }: { logs: string }) {
+  const isObject = (data: string | Record<string, any>) => {
+    try {
+      JSON.stringify(data)
+
+      return true
+    } catch {
+      return false
+    }
+  }
+
   const parsedLogs = logs
     .split('\n')
     .map((line) => {
       try {
         return JSON.parse(line)
       } catch {
-        return null
+        return line
       }
     })
     .filter(Boolean)
@@ -31,15 +41,24 @@ export function LogViewer({ logs }: { logs: string }) {
       {parsedLogs.map((log, index) => (
         <div key={index} className="mb-2">
           <span className="text-accent-foreground/50">
-            {format(new Date(log.timestamp), 'yyyy-MM-dd HH:mm:ss')}
+            {format(
+              new Date(log?.timestamp || new Date()),
+              'yyyy-MM-dd HH:mm:ss'
+            )}
           </span>
           <span className={`ml-2 font-bold ${getColorForLevel(log.level)}`}>
-            [{log.level.toUpperCase()}]
+            [{log?.level?.toUpperCase() || 'LOG'}]
           </span>
-          <span className="ml-2">{log.message}</span>
+          <span className="ml-2">{log.message || log.msg}</span>
           {log.stack && (
-            <pre className="mt-1 text-xs text-gray-600 overflow-x-auto">
+            <pre className="mt-1 text-xs text-accent-foreground/20 overflow-x-auto">
               {log.stack}
+            </pre>
+          )}
+
+          {!isObject(log) && (
+            <pre className="mt-1 text-xs text-accent-foreground/20 overflow-x-auto">
+              {log}
             </pre>
           )}
         </div>
