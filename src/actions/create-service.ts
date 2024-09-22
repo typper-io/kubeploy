@@ -8,6 +8,7 @@ import path from 'path'
 import fs from 'fs'
 import { getServerSession } from 'next-auth'
 import authOptions from '@/app/api/auth/[...nextauth]/authOptions'
+import { ServiceStatus } from '@prisma/client'
 
 function createLogger(serviceName: string) {
   const logDir = path.join(process.cwd(), 'logs')
@@ -557,6 +558,7 @@ export async function createService(
       name,
       description: data.description,
       domain,
+      status: ServiceStatus.PENDING,
     },
   })
 
@@ -578,13 +580,14 @@ export async function createService(
     accessToken: session?.accessToken as string,
   })
     .catch(async () => {
-      logger.error(
-        'Error building and deploying to Kubernetes deleting service...'
-      )
+      logger.error('Error building and deploying to Kubernetes...')
 
-      await prisma.services.delete({
+      await prisma.services.update({
         where: {
           id: createdService.id,
+        },
+        data: {
+          status: ServiceStatus.ERROR,
         },
       })
 
@@ -619,6 +622,15 @@ export async function createService(
 
         return
       }
+
+      await prisma.services.update({
+        where: {
+          id: createdService.id,
+        },
+        data: {
+          status: ServiceStatus.ACTIVE,
+        },
+      })
 
       logger.info('Webhook created successfully')
     })
