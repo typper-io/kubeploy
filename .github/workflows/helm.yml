@@ -1,0 +1,38 @@
+name: Helm Package and Index
+
+on:
+  push:
+    paths:
+      - 'helm/**'
+
+jobs:
+  helm-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.8.1
+
+      - name: Package Helm chart
+        run: |
+          helm package helm/* --destination charts
+
+      - name: Update Helm chart index
+        run: |
+          helm repo index --url https://raw.githubusercontent.com/${{ github.repository }}/main/charts/ --merge index.yaml charts
+
+      - name: Commit and push changes
+        run: |
+          git add charts index.yaml
+          git commit -m "Update Helm chart package and index"
+          git push
