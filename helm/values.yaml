@@ -15,7 +15,7 @@ persistentVolumeClaim:
 
 kubeploy:
   image:
-    repository: kubeploy
+    repository: ghcr.io/typper-io/kubeploy
     tag: latest
     pullPolicy: Always
   replicas: 1

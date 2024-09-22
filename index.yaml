@@ -3,11 +3,11 @@ entries:
   kubeploy:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-09-22T19:02:17.71476-03:00"
+    created: "2024-09-22T19:18:09.951982-03:00"
     description: A Helm chart for Kubeploy
-    digest: 21542db8992babab41426feb9aa368a751609f04c90efb370e8e3c2d2e3b09f6
+    digest: b7c3989ba78c478d691db2bf8f861b4902d567dfd85fb43efa3d8caa5813aec4
     name: kubeploy
     urls:
-    - kubeploy-0.1.0.tgz
-    version: 0.1.0
-generated: "2024-09-22T19:02:17.714235-03:00"
+    - charts/kubeploy-0.1.1.tgz
+    version: 0.1.1
+generated: "2024-09-22T19:18:09.951495-03:00"
