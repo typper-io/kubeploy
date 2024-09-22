@@ -64,10 +64,3 @@ localRegistry:
     secretName: registry-tls
   auth:
     htpasswd: '' # Base64 encoded htpasswd file content
-
-prismaDbPush:
-  image:
-    repository: node
-    tag: 14
-  env:
-    DATABASE_URL: 'postgresql://postgres:password@postgres:5432/kubeploy'
