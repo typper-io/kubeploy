@@ -30,6 +30,12 @@ helm upgrade kubeploy kubeploy/kubeploy \
   --create-namespace \
   --namespace kubeploy \
   --install
+
+# Migrate the database using this command
+kubectl exec -it deploy/kubeploy -n kubeploy -- sh
+
+# Then...
+npx prisma db push
 ```
 
 - **Prerequisites**:
