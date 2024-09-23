@@ -412,6 +412,11 @@ async function buildAndDeployToKubernetes({
                 ],
               },
             ],
+            imagePullSecrets: [
+              {
+                name: 'github-container-registry-auth',
+              },
+            ],
           },
         },
       },
