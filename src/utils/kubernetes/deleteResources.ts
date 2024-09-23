@@ -43,7 +43,6 @@ export async function deleteResources({
         `letsencrypt-${name}`
       ),
       k8sNetworkingApi.deleteNamespacedIngress(`ingress-${name}`, namespace),
-      k8sApi.deleteNamespacedSecret('git-oauth-token', namespace),
     ])
     logger.info('Resources deleted successfully')
   } catch (error) {

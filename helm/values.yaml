@@ -49,6 +49,10 @@ kubeploy:
     APP_DOMAIN: 'localhost'
     WEBHOOK_SECRET: 'your-github-webhook-signature'
 
+    # Used for cloning repositories
+    GITHUB_USERNAME: 'your-github-username'
+    GITHUB_PASSWORD: 'your-github-password-or-personal-access-token'
+
 postgres:
   image:
     repository: postgres

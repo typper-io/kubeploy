@@ -4,8 +4,6 @@ import { waitForJobCompletion } from '@/utils/kubernetes/waitForJobCompletion'
 import { deleteResources } from '@/utils/kubernetes/deleteResources'
 import { waitForDeploymentRollout } from '@/utils/kubernetes/waitForDeploymentRollout'
 import { randomUUID } from 'crypto'
-import { getServerSession } from 'next-auth'
-import authOptions from '@/app/api/auth/[...nextauth]/authOptions'
 
 interface BuildAndDeployToKubernetesFirstDeploy {
   name: string
@@ -38,8 +36,6 @@ export async function buildAndDeployToKubernetes({
   firsDeploy,
 }: BuildAndDeployToKubernetesOptions) {
   const namespace = process.env.DEFAULT_NAMESPACE!
-  const session = await getServerSession(authOptions)
-  const accessToken = session?.accessToken as string
 
   logger.info('Starting buildAndDeployToKubernetes function')
 
@@ -54,21 +50,6 @@ export async function buildAndDeployToKubernetes({
 
   try {
     logger.info('Determining install and build commands')
-
-    const oauthSecret = {
-      apiVersion: 'v1',
-      kind: 'Secret',
-      metadata: {
-        name: 'git-oauth-token',
-        namespace: namespace,
-      },
-      type: 'Opaque',
-      stringData: {
-        token: accessToken,
-      },
-    }
-
-    await k8sApi.createNamespacedSecret(namespace, oauthSecret)
 
     const dockerfileContent = `
       FROM node:lts
@@ -104,6 +85,9 @@ export async function buildAndDeployToKubernetes({
     const githubRegistryName = 'ghcr.io'
     const githubImageName = `${githubRegistryName}/${repository.toLocaleLowerCase()}:${randomUUID()}`
 
+    const USERNAME = process.env.GITHUB_USERNAME!
+    const PASSWORD_OR_TOKEN = process.env
+
     const kanikoBuildJob = {
       apiVersion: 'batch/v1',
       kind: 'Job',
@@ -120,18 +104,7 @@ export async function buildAndDeployToKubernetes({
                 image: 'alpine/git:v2.32.0',
                 command: ['/bin/sh', '-c'],
                 args: [
-                  `git clone --depth 1 --single-branch --branch main https://oauth2:$\{OAUTH_TOKEN}@github.com/${repository}.git /workspace`,
-                ],
-                env: [
-                  {
-                    name: 'OAUTH_TOKEN',
-                    valueFrom: {
-                      secretKeyRef: {
-                        name: 'git-oauth-token',
-                        key: 'token',
-                      },
-                    },
-                  },
+                  `git clone --depth 1 --single-branch --branch main https://${USERNAME}:${PASSWORD_OR_TOKEN}@github.com/${repository}.git /workspace`,
                 ],
                 volumeMounts: [
                   {
@@ -468,8 +441,7 @@ export async function buildAndDeployToKubernetes({
       }
     }
 
-    k8sApi.deleteNamespacedSecret('git-oauth-token', namespace)
-    k8sBatchApi.deleteNamespacedJob(`${sanitizedName}-build`, namespace)
+    await k8sBatchApi.deleteNamespacedJob(`${sanitizedName}-build`, namespace)
 
     logger.info('Ingress created successfully')
 
