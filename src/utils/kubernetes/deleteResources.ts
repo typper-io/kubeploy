@@ -14,10 +14,6 @@ export async function deleteResources({
 }) {
   logger.info('Attempting to delete resources...')
 
-  if (!firsDeploy) {
-    return
-  }
-
   const kc = new k8s.KubeConfig()
   kc.loadFromDefault()
 
@@ -28,13 +24,17 @@ export async function deleteResources({
   const k8sNetworkingApi = kc.makeApiClient(k8s.NetworkingV1Api)
 
   try {
+    if (!firsDeploy) {
+      k8sBatchApi.deleteNamespacedJob(`${name}-build`, namespace)
+
+      return logger.info('Resources deleted successfully')
+    }
+
     await Promise.all([
-      k8sApi.deleteNamespacedConfigMap(`${name}-dockerfile`, namespace),
-      k8sApi.deleteNamespacedConfigMap(`${name}-repo-content`, namespace),
       k8sApi.deleteNamespacedConfigMap(`${name}-env`, namespace),
       k8sBatchApi.deleteNamespacedJob(`${name}-build`, namespace),
       k8sAppsApi.deleteNamespacedDeployment(name, namespace),
-      k8sApi.deleteNamespacedService(name, namespace),
+      k8sApi.deleteNamespacedService(`${name}-service`, namespace),
       k8sCustomObjectsApi.deleteNamespacedCustomObject(
         'cert-manager.io',
         'v1',
