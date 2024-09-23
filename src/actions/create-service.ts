@@ -214,7 +214,7 @@ async function buildAndDeployToKubernetes({
 
     const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, '-')
     const githubRegistryName = 'ghcr.io'
-    const githubImageName = `${githubRegistryName}/${repository}/${sanitizedName}:latest`
+    const githubImageName = `${githubRegistryName}/${repository.toLocaleLowerCase()}:latest`
 
     const kanikoBuildJob = {
       apiVersion: 'batch/v1',
@@ -629,7 +629,7 @@ export async function createService(
       })
 
       if (!response.ok) {
-        logger.error('Error creating webhook:', response.statusText)
+        logger.error('Error creating webhook')
 
         return
       }
