@@ -85,8 +85,8 @@ export async function buildAndDeployToKubernetes({
     const githubRegistryName = 'ghcr.io'
     const githubImageName = `${githubRegistryName}/${repository.toLocaleLowerCase()}:${randomUUID()}`
 
-    const USERNAME = process.env.GITHUB_USERNAME!
-    const PASSWORD_OR_TOKEN = process.env
+    const USERNAME = process.env.GITHUB_USERNAME
+    const PASSWORD_OR_TOKEN = process.env.GITHUB_PASSWORD
 
     const kanikoBuildJob = {
       apiVersion: 'batch/v1',
