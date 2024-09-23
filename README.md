@@ -46,7 +46,7 @@ After installation, access the Kubeploy dashboard to manage your applications:
 1. Forward the service port to your local machine (if necessary):
 
    ```bash
-   kubectl port-forward svc/kubeploy -n kubeploy 3000:3000
+   kubectl port-forward svc/kubeploy-service -n kubeploy 3000:80
    ```
 
 2. Open your web browser and navigate to `http://localhost:3000`.

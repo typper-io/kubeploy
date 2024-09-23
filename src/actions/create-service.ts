@@ -564,7 +564,7 @@ export async function createService(
 
   logger.info('Starting build and deploy process')
 
-  const session = await getServerSession(authOptions())
+  const session = await getServerSession(authOptions)
 
   buildAndDeployToKubernetes({
     name,

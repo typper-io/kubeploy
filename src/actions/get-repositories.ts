@@ -4,7 +4,7 @@ import authOptions from '@/app/api/auth/[...nextauth]/authOptions'
 import { getServerSession } from 'next-auth'
 
 export async function getRepositories() {
-  const session = await getServerSession(authOptions())
+  const session = await getServerSession(authOptions)
 
   if (!session || !session.accessToken) {
     throw new Error('Não autenticado')
