@@ -432,7 +432,7 @@ async function buildAndDeployToKubernetes({
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        name: name,
+        name: `${name}-service`,
         namespace: namespace,
       },
       spec: {
