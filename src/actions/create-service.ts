@@ -213,8 +213,8 @@ async function buildAndDeployToKubernetes({
     logger.info('Creating Kaniko build job')
 
     const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, '-')
-    const localRegistryName = `local-registry.${namespace}.svc.cluster.local:5000`
-    const localImageName = `${localRegistryName}/${sanitizedName}:latest`
+    const githubRegistryName = 'ghcr.io'
+    const githubImageName = `${githubRegistryName}/${repository}/${sanitizedName}:latest`
 
     const kanikoBuildJob = {
       apiVersion: 'batch/v1',
@@ -292,19 +292,22 @@ async function buildAndDeployToKubernetes({
                 args: [
                   '--dockerfile=/workspace/Dockerfile',
                   '--context=/workspace',
-                  `--destination=${localImageName}`,
+                  `--destination=${githubImageName}`,
                   '--cache=true',
                   '--cache-ttl=24h',
                   '--snapshot-mode=redo',
                   '--use-new-run',
                   '--compressed-caching=false',
                   '--log-format=json',
-                  '--insecure',
                 ],
                 volumeMounts: [
                   {
                     name: 'workspace',
                     mountPath: '/workspace',
+                  },
+                  {
+                    name: 'github-token',
+                    mountPath: '/kaniko/.docker',
                   },
                 ],
                 resources: {
@@ -324,6 +327,18 @@ async function buildAndDeployToKubernetes({
               {
                 name: 'workspace',
                 emptyDir: {},
+              },
+              {
+                name: 'github-token',
+                secret: {
+                  secretName: 'github-container-registry-auth',
+                  items: [
+                    {
+                      key: '.dockerconfigjson',
+                      path: 'config.json',
+                    },
+                  ],
+                },
               },
             ],
           },
@@ -386,7 +401,7 @@ async function buildAndDeployToKubernetes({
             containers: [
               {
                 name: name,
-                image: localImageName,
+                image: githubImageName,
                 imagePullPolicy: 'Always',
                 envFrom: [
                   {
