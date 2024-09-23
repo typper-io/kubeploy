@@ -99,7 +99,9 @@ export default function ServiceView() {
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
-          <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
+          <TabsTrigger value="monitoring" disabled>
+            Monitoring (Soon)
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="general" className="py-4 space-y-5">
           <div className="border-destructive border rounded-md p-4 border-dashed relative flex gap-8 flex-col">

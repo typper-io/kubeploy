@@ -4,6 +4,7 @@
     "GITHUB",
     "kaniko",
     "kubeploy",
+    "kubernetes",
     "LETSENCRYPT",
     "NEXTAUTH",
     "nextui",

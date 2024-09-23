@@ -12,6 +12,7 @@ model Services {
   name        String        @unique
   description String
   domain      String
+  repository  String?
   status      ServiceStatus
 
   createdAt DateTime  @default(now())

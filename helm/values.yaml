@@ -47,6 +47,7 @@ kubeploy:
 
     # Used for github webhook
     APP_DOMAIN: 'localhost'
+    WEBHOOK_SECRET: 'your-github-webhook-signature'
 
 postgres:
   image:
