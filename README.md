@@ -11,12 +11,18 @@ Kubeploy is an open-source platform designed to simplify the deployment of Next.
 
 ## Table of Contents
 
+- [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 - [Configuration](#configuration)
-- [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Screenshots
+
+![home](screenshots/home.png)
+![new-service](screenshots/new-service.png)
+![service-page](screenshots/service-page.png)
 
 ## Installation
 
@@ -157,10 +163,6 @@ certManager:
 ingressNginx:
   enabled: true
 ```
-
-## Screenshots
-
-TDB
 
 ## Contributing
 
