@@ -19,6 +19,16 @@ kubeploy:
     tag: latest
     pullPolicy: Always
   replicas: 1
+  githubContainerRegistry:
+    enabled: true
+    secretName: github-container-registry-auth
+    username: 'your-github-username'
+    # You should use a personal access token instead of your password with the following permissions:
+    # - read:packages
+    # - write:packages
+    # - delete:packages
+    password: 'your-github-personal-access-token'
+
   env:
     DATABASE_URL: 'postgresql://postgres:password@localhost:5432/kubeploy'
 
@@ -52,15 +62,8 @@ service:
   port: 80
   targetPort: 3000
 
-localRegistry:
-  image:
-    repository: registry
-    tag: '2'
-  replicas: 1
-  service:
-    port: 5000
-  tls:
-    enabled: true
-    secretName: registry-tls
-  auth:
-    htpasswd: '' # Base64 encoded htpasswd file content
+certManager:
+  enabled: true
+
+ingressNginx:
+  enabled: true
